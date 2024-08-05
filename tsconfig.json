@@ -23,7 +23,7 @@
     "strictFunctionTypes": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitReturns": true,
+    "noImplicitReturns": true
   },
   "include": [
     "next-env.d.ts",

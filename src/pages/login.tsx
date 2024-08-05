@@ -5,15 +5,15 @@ import { Form, Formik } from 'formik';
 import InputField from '../components/InputField';
 import toErrorMap from '../utils/toErrorMap';
 import { useRouter } from 'next/router';
-import { useCreateUserMutation } from '../generated/graphql';
+import { useLoginMutation } from '../generated/graphql';
 
 interface FormValues {
     username: string;
     password: string;
 }
 
-const Register: React.FC<{}> = ({}) => {
-    const [createUser, {loading}] = useCreateUserMutation();
+const Login: React.FC<{}> = ({}) => {
+    const [login, {loading}] = useLoginMutation();
     const router = useRouter();
     return (
             <Flex align={'center'} justify={'center'} h={"100%"}>
@@ -24,10 +24,10 @@ const Register: React.FC<{}> = ({}) => {
                             password: ""
                         }}
                         onSubmit={async (values: FormValues, actions) => {
-                            const response = await createUser({variables:{username: values.username, password: values.password}});
-                            if (response.data?.createUser.errors)
-                                actions.setErrors(toErrorMap(response.data.createUser.errors));
-                            else if (response.data?.createUser.user)
+                            const response = await login({variables: values});
+                            if (response.data?.login.errors)
+                                actions.setErrors(toErrorMap(response.data.login.errors));
+                            else if (response.data?.login.user)
                                 router.replace("/");
                         }}
                     >
@@ -36,7 +36,7 @@ const Register: React.FC<{}> = ({}) => {
                                 <VStack spacing={4} align={"flex-start"}>
                                     <InputField name="username" label="Username" type="text"/>
                                     <InputField name="password" label="Password" type="password"/>
-                                    <Button type='submit' colorScheme='purple' w="full" isLoading={loading}>Register</Button>
+                                    <Button type='submit' colorScheme='purple' w="full" isLoading={loading}>Login</Button>
                                 </VStack>
                             </Form>
                         )}
@@ -46,4 +46,4 @@ const Register: React.FC<{}> = ({}) => {
     );
 }
 
-export default Register;
+export default Login;
