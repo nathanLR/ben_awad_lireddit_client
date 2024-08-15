@@ -6,10 +6,21 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import Wrapper from "../components/Wrapper";
 
 const client = new ApolloClient({
-  cache: new InMemoryCache(),
+  name: "lireddit_client",
+  cache: new InMemoryCache({
+    typePolicies: {
+      User: {
+        keyFields: ["id", "username"]
+      }
+    }
+  }),
   uri: "http://localhost:4000/graphql",
-  credentials: "include"
+  credentials: "include",
+  devtools: {
+    enabled: true
+  }
 })
+
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import React from 'react';
 
 interface WrapperProps {
@@ -7,9 +7,9 @@ interface WrapperProps {
 
 const Wrapper: React.FC<WrapperProps> = ({children}) => {
     return (
-        <Box bg="gray.100" px={15} w={"full"} h={"100vh"}>
+        <Flex bg="gray.100"  w={"full"} minH={"100vh"} flexDirection={"column"}>
             {children}
-        </Box>
+        </Flex>
     );
 }
 

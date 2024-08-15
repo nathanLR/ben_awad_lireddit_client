@@ -16,7 +16,7 @@ const Register: React.FC<{}> = ({}) => {
     const [createUser, {loading}] = useCreateUserMutation();
     const router = useRouter();
     return (
-            <Flex align={'center'} justify={'center'} h={"100%"}>
+            <Flex align={'center'} justify={'center'} flex={1}>
                 <Box bg={"white"} p={6} w={80} rounded={"md"}>
                     <Formik<FormValues>
                         initialValues={{
