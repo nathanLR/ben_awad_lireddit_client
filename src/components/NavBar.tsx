@@ -1,20 +1,31 @@
 import { Button, Flex, HStack } from '@chakra-ui/react';
 import NextLink from "next/link";
 import React, { ReactNode } from 'react';
-import { useMeQuery } from '../generated/graphql';
+import { LogoutMutation, MeDocument, MeQuery, useLogoutMutation, useMeQuery } from '../generated/graphql';
 
 interface NavBarProps {
 
 }
 
 const NavBar: React.FC<NavBarProps> = ({}) => {
-    const {data, loading} = useMeQuery();
-    console.log(data);
+    const [logout, {loading: loadingLogout}] = useLogoutMutation({
+        update(cache, {data: logoutData}){
+            cache.updateQuery<MeQuery, LogoutMutation>({query: MeDocument}, cachedData => {
+                if(!logoutData?.logout)
+                    return cachedData;
+                else
+                    return {
+                        whoAmI: null
+                    }
+            })
+        }
+    });
+    const {data: dataMe, loading: loadingMe} = useMeQuery();
     let content: ReactNode = null;
 
-    if (loading){
+    if (loadingMe){
         
-    }else if (data?.whoAmI == null){
+    }else if (dataMe?.whoAmI == null){
         content = (
             <HStack spacing={4} ml={"auto"}>
                 <NextLink href={"/login"}>
@@ -32,9 +43,16 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
                    Login
                 </NextLink>
                 <NextLink href={"/profile"}>
-                   {data.whoAmI.username}
+                   {dataMe.whoAmI.username}
                 </NextLink>
-                <Button variant="link">Logout</Button>
+                <Button variant="link"
+                    onClick={async () =>{
+                        const response = await logout();
+                        if (!response.data?.logout)
+                            console.error("Unable to logout...")
+                    }} 
+                    isLoading={loadingLogout}
+                >Logout</Button>
             </HStack>
         );
     }

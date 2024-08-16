@@ -6,7 +6,6 @@ import InputField from '../components/InputField';
 import toErrorMap from '../utils/toErrorMap';
 import { useRouter } from 'next/router';
 import { LoginMutation, MeDocument, MeQuery, useLoginMutation } from '../generated/graphql';
-import Link from 'next/link';
 
 interface FormValues {
     username: string;
@@ -29,9 +28,6 @@ const Login: React.FC<{}> = ({}) => {
     const router = useRouter();
     return (
             <Flex align={'center'} justify={'center'} flex={1}>
-                <Link href={"/"}>
-                   home
-                </Link>
                 <Box bg={"white"} p={6} w={80} rounded={"md"}>
                     <Formik<FormValues>
                         initialValues={{
