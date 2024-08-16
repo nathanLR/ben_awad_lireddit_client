@@ -5,7 +5,7 @@ import { Form, Formik } from 'formik';
 import InputField from '../components/InputField';
 import toErrorMap from '../utils/toErrorMap';
 import { useRouter } from 'next/router';
-import { useLoginMutation } from '../generated/graphql';
+import { LoginMutation, MeDocument, MeQuery, useLoginMutation } from '../generated/graphql';
 import Link from 'next/link';
 
 interface FormValues {
@@ -14,7 +14,18 @@ interface FormValues {
 }
 
 const Login: React.FC<{}> = ({}) => {
-    const [login, {loading}] = useLoginMutation();
+    const [login, {loading}] = useLoginMutation({
+        update(cache, {data: loginData}){
+            cache.updateQuery<MeQuery, LoginMutation>({query: MeDocument}, cachedData => {
+                if(loginData?.login.errors)
+                    return cachedData;
+                else
+                    return {
+                        whoAmI: loginData?.login.user
+                    }
+            })
+        }
+    });
     const router = useRouter();
     return (
             <Flex align={'center'} justify={'center'} flex={1}>

@@ -5,7 +5,7 @@ import { Form, Formik } from 'formik';
 import InputField from '../components/InputField';
 import toErrorMap from '../utils/toErrorMap';
 import { useRouter } from 'next/router';
-import { useCreateUserMutation } from '../generated/graphql';
+import { CreateUserMutation, MeDocument, MeQuery, useCreateUserMutation } from '../generated/graphql';
 
 interface FormValues {
     username: string;
@@ -13,7 +13,19 @@ interface FormValues {
 }
 
 const Register: React.FC<{}> = ({}) => {
-    const [createUser, {loading}] = useCreateUserMutation();
+    const [createUser, {data, loading}] = useCreateUserMutation({
+        update(cache, {data: registerData}){
+            cache.updateQuery<MeQuery, CreateUserMutation>({query: MeDocument}, cachedData => {
+                if(registerData?.createUser.errors)
+                    return cachedData;
+                else
+                    return {
+                        whoAmI: registerData?.createUser.user
+                    }
+            })
+        }
+    });
+    console.log(data);
     const router = useRouter();
     return (
             <Flex align={'center'} justify={'center'} flex={1}>

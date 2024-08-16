@@ -95,6 +95,8 @@ export type UserResponse = {
   user?: Maybe<User>;
 };
 
+export type UserFieldsFragment = { __typename?: 'User', id: number, username: string };
+
 export type LoginMutationVariables = Exact<{
   password: Scalars['String']['input'];
   username: Scalars['String']['input'];
@@ -116,7 +118,12 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { __typename?: 'Query', whoAmI?: { __typename?: 'User', id: number, username: string } | null };
 
-
+export const UserFieldsFragmentDoc = gql`
+    fragment UserFields on User {
+  id
+  username
+}
+    `;
 export const LoginDocument = gql`
     mutation Login($password: String!, $username: String!) {
   login(password: $password, username: $username) {
@@ -125,12 +132,11 @@ export const LoginDocument = gql`
       message
     }
     user {
-      id
-      username
+      ...UserFields
     }
   }
 }
-    `;
+    ${UserFieldsFragmentDoc}`;
 export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**
@@ -162,8 +168,7 @@ export const CreateUserDocument = gql`
     mutation CreateUser($password: String!, $username: String!) {
   createUser(password: $password, username: $username) {
     user {
-      id
-      username
+      ...UserFields
     }
     errors {
       field
@@ -171,7 +176,7 @@ export const CreateUserDocument = gql`
     }
   }
 }
-    `;
+    ${UserFieldsFragmentDoc}`;
 export type CreateUserMutationFn = Apollo.MutationFunction<CreateUserMutation, CreateUserMutationVariables>;
 
 /**
@@ -202,11 +207,10 @@ export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMut
 export const MeDocument = gql`
     query Me {
   whoAmI {
-    id
-    username
+    ...UserFields
   }
 }
-    `;
+    ${UserFieldsFragmentDoc}`;
 
 /**
  * __useMeQuery__

@@ -1,6 +1,5 @@
 query Me {
   whoAmI {
-    id
-    username
+    ...UserFields
   }
 }

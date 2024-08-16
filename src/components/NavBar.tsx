@@ -8,12 +8,12 @@ interface NavBarProps {
 }
 
 const NavBar: React.FC<NavBarProps> = ({}) => {
-    const {data, loading, } = useMeQuery();
+    const {data, loading} = useMeQuery();
     console.log(data);
     let content: ReactNode = null;
 
     if (loading){
-
+        
     }else if (data?.whoAmI == null){
         content = (
             <HStack spacing={4} ml={"auto"}>
