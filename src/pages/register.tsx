@@ -10,6 +10,7 @@ import { CreateUserMutation, MeDocument, MeQuery, useCreateUserMutation } from '
 interface FormValues {
     username: string;
     password: string;
+    email: string;
 }
 
 const Register: React.FC<{}> = ({}) => {
@@ -33,10 +34,11 @@ const Register: React.FC<{}> = ({}) => {
                     <Formik<FormValues>
                         initialValues={{
                             username: "",
-                            password: ""
+                            password: "",
+                            email: ""
                         }}
                         onSubmit={async (values: FormValues, actions) => {
-                            const response = await createUser({variables:{username: values.username, password: values.password}});
+                            const response = await createUser({variables:{username: values.username, password: values.password, email: values.email}});
                             if (response.data?.createUser.errors)
                                 actions.setErrors(toErrorMap(response.data.createUser.errors));
                             else if (response.data?.createUser.user)
@@ -47,6 +49,7 @@ const Register: React.FC<{}> = ({}) => {
                             <Form>
                                 <VStack spacing={4} align={"flex-start"}>
                                     <InputField name="username" label="Username" type="text"/>
+                                    <InputField name="email" label="Email" type="text"/>
                                     <InputField name="password" label="Password" type="password"/>
                                     <Button type='submit' colorScheme='purple' w="full" isLoading={loading}>Register</Button>
                                 </VStack>

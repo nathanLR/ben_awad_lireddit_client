@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { LoginMutation, MeDocument, MeQuery, useLoginMutation } from '../generated/graphql';
 
 interface FormValues {
-    username: string;
+    usernameOrEmail: string;
     password: string;
 }
 
@@ -31,13 +31,15 @@ const Login: React.FC<{}> = ({}) => {
                 <Box bg={"white"} p={6} w={80} rounded={"md"}>
                     <Formik<FormValues>
                         initialValues={{
-                            username: "",
+                            usernameOrEmail: "",
                             password: ""
                         }}
                         onSubmit={async (values: FormValues, actions) => {
                             const response = await login({variables: values});
-                            if (response.data?.login.errors)
+                            if (response.data?.login.errors){
+                                console.log(toErrorMap(response.data.login.errors));
                                 actions.setErrors(toErrorMap(response.data.login.errors));
+                            }
                             else if (response.data?.login.user)
                                 router.replace("/");
                         }}
@@ -45,7 +47,7 @@ const Login: React.FC<{}> = ({}) => {
                         {() => (
                             <Form>
                                 <VStack spacing={4} align={"flex-start"}>
-                                    <InputField name="username" label="Username" type="text"/>
+                                    <InputField name="usernameOrEmail" label="Username Or Email" type="text"/>
                                     <InputField name="password" label="Password" type="password"/>
                                     <Button type='submit' colorScheme='purple' w="full" isLoading={loading}>Login</Button>
                                 </VStack>

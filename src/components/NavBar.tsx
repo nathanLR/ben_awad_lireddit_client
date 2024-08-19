@@ -39,9 +39,6 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
     }else{
         content = (
             <HStack spacing={4} ml={"auto"}>
-                <NextLink href={"/login"}>
-                   Login
-                </NextLink>
                 <NextLink href={"/profile"}>
                    {dataMe.whoAmI.username}
                 </NextLink>
