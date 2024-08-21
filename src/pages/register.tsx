@@ -1,11 +1,12 @@
 
-import { Flex, Box, VStack, Button } from '@chakra-ui/react';
+import { Flex, Box, VStack, Button, Link } from '@chakra-ui/react';
 import React from 'react';
 import { Form, Formik } from 'formik';
 import InputField from '../components/InputField';
 import toErrorMap from '../utils/toErrorMap';
 import { useRouter } from 'next/router';
 import { CreateUserMutation, MeDocument, MeQuery, useCreateUserMutation } from '../generated/graphql';
+import NextLink from "next/link";
 
 interface FormValues {
     username: string;
@@ -50,7 +51,8 @@ const Register: React.FC<{}> = ({}) => {
                                 <VStack spacing={4} align={"flex-start"}>
                                     <InputField name="username" label="Username" type="text"/>
                                     <InputField name="email" label="Email" type="text"/>
-                                    <InputField name="password" label="Password" type="password"/>
+                                    <InputField name="password" label="Password" type="text"/>
+                                    <Link href='/login' as={NextLink} color="blue.700">Already have an account ?</Link>
                                     <Button type='submit' colorScheme='purple' w="full" isLoading={loading}>Register</Button>
                                 </VStack>
                             </Form>
