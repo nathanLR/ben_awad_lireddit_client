@@ -7,7 +7,8 @@ import toErrorMap from "../utils/toErrorMap";
 import { useCreatePostMutation } from "../generated/graphql";
 import { Layout } from "../components/Layout";
 import Wrapper from "../components/Wrapper";
-import { useGlobalContext } from "../context/GlobalProvider";
+import { useErrorContext } from "../context/ErrorContext";
+import useIsAuth from "../utils/useIsAuth";
 
 interface FormValues {
   title: string;
@@ -16,7 +17,8 @@ interface FormValues {
 
 const CreatePost: React.FC<{}> = ({}) => {
   const [createPost, { loading }] = useCreatePostMutation();
-  const {setServerError} = useGlobalContext();
+  const {setError} = useErrorContext();
+  useIsAuth(true, 5);
   const router = useRouter();
   return (
     <Layout>
@@ -39,7 +41,7 @@ const CreatePost: React.FC<{}> = ({}) => {
                         actions.setErrors(toErrorMap(response.data.createPost.errors));
                       else if (response.data?.createPost.post) router.push("/");
                 } catch (error: any) {
-                    setServerError({
+                    setError({
                         newError: true,
                         type: error.graphQLErrors[0]?.extensions.code,
                         message: error.graphQLErrors[0]?.message

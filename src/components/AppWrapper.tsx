@@ -1,6 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import React from "react";
-import GlobalProvider from "../context/GlobalProvider";
+import ErrorProvider from "../context/ErrorContext";
+import InfoProvider from "../context/InfoContext";
 
 interface AppWrapperProps {
   children: React.ReactNode;
@@ -8,10 +9,12 @@ interface AppWrapperProps {
 
 export const AppWrapper: React.FC<AppWrapperProps> = ({ children }) => {
   return (
-    <GlobalProvider>
-      <Box minH={"100vh"} bg={"gray.800"} color={"white"}>
-        {children}
-      </Box>
-    </GlobalProvider>
+    <ErrorProvider>
+      <InfoProvider>
+        <Box minH={"100vh"} bg={"gray.800"} color={"white"}>
+          {children}
+        </Box>
+      </InfoProvider>
+    </ErrorProvider>
   );
 };
