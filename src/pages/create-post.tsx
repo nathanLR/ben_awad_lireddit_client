@@ -18,7 +18,7 @@ interface FormValues {
 const CreatePost: React.FC<{}> = ({}) => {
   const [createPost, { loading }] = useCreatePostMutation();
   const {setError} = useErrorContext();
-  useIsAuth(true, 5);
+  useIsAuth();
   const router = useRouter();
   return (
     <Layout>

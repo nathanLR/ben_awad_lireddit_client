@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useInfoContext } from "../context/InfoContext";
 import { useMeQuery } from "../generated/graphql";
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Box, Button } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { Countdown } from "../components/Countdown";
 
 const useIsAuth = () => {
   const { data, loading } = useMeQuery();
@@ -19,7 +18,15 @@ const useIsAuth = () => {
           <Box>You need to be authenticated in order to use this page.</Box>
         ),
         modalFooter: [
-          <Button  bg={"green.100"} _hover={{ bg: "green.300" }}>
+          <Button  bg={"green.100"} _hover={{ bg: "green.300" }} onClick={() => {
+            setInfo({
+                newMessage: false,
+                modalBody: "",
+                modalHeader: "",
+                modalFooter: []
+            });
+            router.replace("/login");
+          }}>
             Redirect me
           </Button>,
         ],
