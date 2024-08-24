@@ -1,13 +1,21 @@
-import { Button, Flex, HStack } from '@chakra-ui/react';
+import { Button, HStack, Link } from '@chakra-ui/react';
 import NextLink from "next/link";
 import React, { ReactNode } from 'react';
 import { LogoutMutation, MeDocument, MeQuery, useLogoutMutation, useMeQuery } from '../generated/graphql';
 
-interface NavBarProps {
-
+interface NavBarWrapperProps {
+    children: React.ReactNode;
 }
 
-const NavBar: React.FC<NavBarProps> = ({}) => {
+const NavBarWrapper: React.FC<NavBarWrapperProps> = ({children}) => {
+    return (
+        <HStack spacing={4} bg={"gray.900"} p={5} color={"black"} justify={"flex-end"} boxShadow={"lg"}>
+            {children}
+        </HStack>
+    )
+}
+
+const NavBar: React.FC<{}> = ({}) => {
     const [logout, {loading: loadingLogout}] = useLogoutMutation({
         update(cache, {data: logoutData}){
             cache.updateQuery<MeQuery, LogoutMutation>({query: MeDocument}, cachedData => {
@@ -27,22 +35,18 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
         
     }else if (dataMe?.whoAmI == null){
         content = (
-            <HStack spacing={4} ml={"auto"}>
-                <NextLink href={"/login"}>
-                   Login
-                </NextLink>
-                <NextLink href={"/register"}>
-                   Register 
-                </NextLink>
-            </HStack>
+            <NavBarWrapper>
+                <Button as={NextLink} href={"/login"} bg={"green.100"} _hover={{bg: "green.300"}}>Login</Button>
+                <Button as={NextLink} href={"/register"} bg={"green.100"} _hover={{bg: "green.300"}}>Register</Button>
+            </NavBarWrapper>
         );
     }else{
         content = (
-            <HStack spacing={4} ml={"auto"}>
-                <NextLink href={"/profile"}>
-                   {dataMe.whoAmI.username}
-                </NextLink>
-                <Button variant="link"
+            <NavBarWrapper>
+                <Link as={NextLink} href='/profile' color={"green.200"}>
+                    {dataMe.whoAmI.username}
+                </Link>
+                <Button bg={"green.100"} _hover={{bg: "green.300"}}
                     onClick={async () =>{
                         const response = await logout();
                         if (!response.data?.logout)
@@ -50,13 +54,13 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
                     }} 
                     isLoading={loadingLogout}
                 >Logout</Button>
-            </HStack>
+            </NavBarWrapper>
         );
     }
     return (
-        <Flex bg={"white"} shadow={"sm"} p={4}>
+        <>
             {content}
-        </Flex>
+        </>
     );
 }
 

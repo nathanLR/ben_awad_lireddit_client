@@ -1,9 +1,8 @@
 import { ChakraProvider } from "@chakra-ui/react";
-
 import theme from "../theme";
 import { AppProps } from "next/app";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import Wrapper from "../components/Wrapper";
+import { AppWrapper } from "../components/AppWrapper";
 
 const client = new ApolloClient({
   name: "lireddit_client",
@@ -26,9 +25,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={client}>
       <ChakraProvider theme={theme}>
-        <Wrapper>
+        <AppWrapper>
           <Component {...pageProps} />
-        </Wrapper>
+        </AppWrapper>
       </ChakraProvider>
     </ApolloProvider>
   );

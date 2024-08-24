@@ -1,16 +1,15 @@
 import React from 'react'
-import NavBar from '../components/NavBar'
 import { useGetPostsQuery } from '../generated/graphql'
+import { Layout } from '../components/Layout';
+import { Box } from '@chakra-ui/react';
 
 export default function index() {
   const {loading, data} = useGetPostsQuery();
-  console.log(data);
   return (
-    <>
-      <NavBar />
-      <div>index</div>
-      <br/>
-      {!data ? <div>loading...</div> : data.getPosts.map(post => <div key={post.id}>{post.title}</div>)}
-    </>
+    <Layout>
+      <Box>
+        {loading ? "loading posts..." : data?.getPosts.map(post => <Box>{post.title}</Box>)}
+      </Box>
+    </Layout>
   )
 }
