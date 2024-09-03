@@ -4,11 +4,12 @@ import { useRouter } from "next/router";
 import React from "react";
 import InputField from "../components/InputField";
 import toErrorMap from "../utils/toErrorMap";
-import { useCreatePostMutation } from "../generated/graphql";
+import { CreatePostDocument, CreatePostMutation, GetPostsDocument, GetPostsQuery, useCreatePostMutation } from "../generated/graphql";
 import { Layout } from "../components/Layout";
 import Wrapper from "../components/Wrapper";
 import { useErrorContext } from "../context/ErrorContext";
 import useIsAuth from "../utils/useIsAuth";
+import { gql } from "@apollo/client";
 
 interface FormValues {
   title: string;
@@ -16,7 +17,42 @@ interface FormValues {
 }
 
 const CreatePost: React.FC<{}> = ({}) => {
-  const [createPost, { loading }] = useCreatePostMutation();
+   const [createPost, { loading }] = useCreatePostMutation(
+    {
+      update: (cache, {data: postData}) => {
+        cache.updateQuery<GetPostsQuery, CreatePostMutation>(
+          {query: CreatePostDocument},
+          (previousData) => {
+            if (postData?.createPost.errors) return previousData?.getPosts;
+            return {
+              getPosts: [postData?.createPost.post, ...previousData?.getPosts]
+            }
+          }
+        )
+      }
+    }
+  //{
+  //   update: (cache, {data: postData}) => {
+  //     cache.modify<GetPostsQuery>({
+  //       fields: {
+  //         getPosts(cachedPosts = []) {
+  //           if (postData?.createPost.errors) return cachedPosts;
+  //           const newPost = cache.writeFragment({
+  //             data: postData,
+  //             fragment: gql`
+  //               fragment NewPost on Post {
+  //                 id
+  //                 type
+  //               }
+  //             `
+  //           });
+  //           return [...cachedPosts, newPost]
+  //         }
+  //       }
+  //     })
+  //   }
+  // }
+  );
   const {setError} = useErrorContext();
   useIsAuth();
   const router = useRouter();

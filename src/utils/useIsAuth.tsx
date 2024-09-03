@@ -25,7 +25,7 @@ const useIsAuth = () => {
                 modalHeader: "",
                 modalFooter: []
             });
-            router.replace("/login");
+            router.replace("/login?next=" + router.pathname);
           }}>
             Redirect me
           </Button>,

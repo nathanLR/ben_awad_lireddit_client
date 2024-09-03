@@ -20,7 +20,7 @@ interface FormValues {
 
 const Login: React.FC<{}> = ({}) => {
   const [login, { loading }] = useLoginMutation({
-    update(cache, { data: loginData }) {
+    update: (cache, { data: loginData }) => {
       cache.updateQuery<MeQuery, LoginMutation>(
         { query: MeDocument },
         (cachedData) => {
@@ -46,7 +46,12 @@ const Login: React.FC<{}> = ({}) => {
             const response = await login({ variables: values });
             if (response.data?.login.errors)
               actions.setErrors(toErrorMap(response.data.login.errors));
-            else if (response.data?.login.user) router.replace("/");
+            else if (response.data?.login.user){
+              if (router.query.next != undefined)
+                router.replace(router.query.next);
+              else
+                router.replace("/");
+            }
           }}
         >
           {() => (

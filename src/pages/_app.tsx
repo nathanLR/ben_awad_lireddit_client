@@ -3,13 +3,24 @@ import theme from "../theme";
 import { AppProps } from "next/app";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { AppWrapper } from "../components/AppWrapper";
+import {Post} from "../generated/graphql";
 
 const client = new ApolloClient({
   name: "lireddit_client",
   cache: new InMemoryCache({
     typePolicies: {
-      User: {
-        keyFields: ["id", "username"]
+      Query: {
+        fields: {
+          getPosts: {
+            keyArgs: false,
+            merge(existing: Post[], incoming: Post[]){
+              console.log("MERGING", existing, incoming)
+              const merge = existing ? existing.slice(0) : [];
+              return [...merge, ...incoming];
+            }
+
+          }
+        }
       }
     }
   }),

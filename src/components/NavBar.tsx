@@ -9,7 +9,7 @@ interface NavBarWrapperProps {
 
 const NavBarWrapper: React.FC<NavBarWrapperProps> = ({children}) => {
     return (
-        <HStack spacing={4} bg={"gray.900"} p={5} color={"black"} justify={"flex-end"} boxShadow={"lg"}>
+        <HStack spacing={4} bg={"gray.900"} p={5} color={"black"} justify={"flex-end"} boxShadow={"lg"} mb={6}>
             {children}
         </HStack>
     )
