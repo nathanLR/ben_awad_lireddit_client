@@ -18,12 +18,13 @@ interface PostsLayoutProps {}
 
 const PostsLayout: React.FC<PostsLayoutProps> = ({}) => {
   const { loading, data, fetchMore, error } = useGetPostsQuery({
+    notifyOnNetworkStatusChange: true,
     variables: { limit: 10 },
   });
   console.log("erreur: ", error);
   console.log("useGetPostsQuery", data);
   const router = useRouter();
-  if (loading) {
+  if (loading && !data) {
     return (
       <Grid templateColumns={"repeat(3, 1fr)"} gap={6} mx="auto" mt={6}>
         {[...Array(8)].map((_, index) => {
@@ -44,7 +45,7 @@ const PostsLayout: React.FC<PostsLayoutProps> = ({}) => {
     return (
       <Box>
         <Grid templateColumns={"repeat(3, 1fr)"} gap={6} mx="auto" mt={6}>
-          {data?.getPosts.map((post) => {
+          {data?.getPosts.posts.map((post) => {
             return (
               <GridItem
                 key={post.id}
@@ -60,7 +61,9 @@ const PostsLayout: React.FC<PostsLayoutProps> = ({}) => {
             );
           })}
         </Grid>
-        <Center mt={6}>
+        {
+          data?.getPosts.hasMore ?
+          <Center mt={6}>
           <Button
             bg={"green.100"}
             _hover={{ bg: "green.300" }}
@@ -69,15 +72,15 @@ const PostsLayout: React.FC<PostsLayoutProps> = ({}) => {
               fetchMore({
                 variables: {
                   cursor:
-                    data?.getPosts[data.getPosts.length - 1]
-                      .createdAt,
+                    data?.getPosts.posts[data.getPosts.posts.length - 1].createdAt,
                 },
               });
             }}
           >
             Load more
           </Button>
-        </Center>
+        </Center> : ""
+        }
       </Box>
     );
   }

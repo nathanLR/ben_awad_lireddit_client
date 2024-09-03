@@ -76,6 +76,12 @@ export type MutationUpdatePostArgs = {
   title: Scalars['String']['input'];
 };
 
+export type PaginatedPosts = {
+  __typename?: 'PaginatedPosts';
+  hasMore: Scalars['Boolean']['output'];
+  posts: Array<Post>;
+};
+
 export type Post = {
   __typename?: 'Post';
   createdAt: Scalars['String']['output'];
@@ -102,7 +108,7 @@ export type PostResponse = {
 export type Query = {
   __typename?: 'Query';
   getPost?: Maybe<Post>;
-  getPosts: Array<Post>;
+  getPosts: PaginatedPosts;
   getUsers: Array<User>;
   whoAmI?: Maybe<User>;
 };
@@ -191,7 +197,7 @@ export type GetPostsQueryVariables = Exact<{
 }>;
 
 
-export type GetPostsQuery = { __typename?: 'Query', getPosts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textExcerpt: string, user: { __typename?: 'User', id: number, username: string } }> };
+export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textExcerpt: string, user: { __typename?: 'User', id: number, username: string } }> } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -441,15 +447,18 @@ export type ResetPasswordMutationOptions = Apollo.BaseMutationOptions<ResetPassw
 export const GetPostsDocument = gql`
     query GetPosts($limit: Int!, $cursor: String) {
   getPosts(limit: $limit, cursor: $cursor) {
-    id
-    createdAt
-    updatedAt
-    title
-    textExcerpt
-    user {
+    posts {
       id
-      username
+      createdAt
+      updatedAt
+      title
+      textExcerpt
+      user {
+        id
+        username
+      }
     }
+    hasMore
   }
 }
     `;
