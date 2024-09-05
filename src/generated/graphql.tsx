@@ -33,6 +33,7 @@ export type Mutation = {
   logout: Scalars['Boolean']['output'];
   resetPassword: UserResponse;
   updatePost: PostResponse;
+  vote: Scalars['Boolean']['output'];
 };
 
 
@@ -76,6 +77,12 @@ export type MutationUpdatePostArgs = {
   title: Scalars['String']['input'];
 };
 
+
+export type MutationVoteArgs = {
+  postId: Scalars['Int']['input'];
+  value: Scalars['Int']['input'];
+};
+
 export type PaginatedPosts = {
   __typename?: 'PaginatedPosts';
   hasMore: Scalars['Boolean']['output'];
@@ -91,6 +98,7 @@ export type Post = {
   textExcerpt: Scalars['String']['output'];
   title: Scalars['String']['output'];
   updatedAt: Scalars['String']['output'];
+  upvotes?: Maybe<Array<Upvote>>;
   user: User;
 };
 
@@ -124,6 +132,13 @@ export type QueryGetPostsArgs = {
   limit: Scalars['Int']['input'];
 };
 
+export type Upvote = {
+  __typename?: 'Upvote';
+  postId: Scalars['Float']['output'];
+  userId: Scalars['Float']['output'];
+  value: Scalars['Float']['output'];
+};
+
 export type User = {
   __typename?: 'User';
   createdAt: Scalars['String']['output'];
@@ -131,6 +146,7 @@ export type User = {
   id: Scalars['Int']['output'];
   posts?: Maybe<Array<Post>>;
   updatedAt: Scalars['String']['output'];
+  upvotes?: Maybe<Array<Upvote>>;
   username: Scalars['String']['output'];
 };
 
@@ -151,7 +167,7 @@ export type CreatePostMutationVariables = Exact<{
 }>;
 
 
-export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, post?: { __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, text: string, points: number, user: { __typename?: 'User', id: number, username: string } } | null } };
+export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, post?: { __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textExcerpt: string, points: number, user: { __typename?: 'User', id: number, username: string } } | null } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String']['input'];
@@ -197,7 +213,7 @@ export type GetPostsQueryVariables = Exact<{
 }>;
 
 
-export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textExcerpt: string, user: { __typename?: 'User', id: number, username: string } }> } };
+export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textExcerpt: string, points: number, user: { __typename?: 'User', id: number, username: string } }> } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -239,7 +255,7 @@ export const CreatePostDocument = gql`
       createdAt
       updatedAt
       title
-      text
+      textExcerpt
       points
       user {
         id
@@ -453,6 +469,7 @@ export const GetPostsDocument = gql`
       updatedAt
       title
       textExcerpt
+      points
       user {
         id
         username

@@ -8,7 +8,7 @@ mutation CreatePost($input: PostInput!) {
       createdAt
       updatedAt
       title
-      text
+      textExcerpt
       points
       user {
         id

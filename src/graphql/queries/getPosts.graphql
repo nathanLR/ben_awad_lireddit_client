@@ -6,6 +6,7 @@ query GetPosts($limit: Int!, $cursor: String) {
       updatedAt
       title
       textExcerpt
+      points
       user {
         id
         username

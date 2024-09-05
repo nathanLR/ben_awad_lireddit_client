@@ -5,25 +5,29 @@ import {
   Button,
   Card,
   CardBody,
+  CardFooter,
   CardHeader,
   Center,
+  Divider,
+  Flex,
   Grid,
   GridItem,
+  Heading,
   Skeleton,
   SkeletonText,
+  Tag,
+  Text,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import NextLink from "next/link";
+import { StarIcon } from "@chakra-ui/icons";
 
 interface PostsLayoutProps {}
 
 const PostsLayout: React.FC<PostsLayoutProps> = ({}) => {
-  const { loading, data, fetchMore, error } = useGetPostsQuery({
+  const { loading, data, fetchMore } = useGetPostsQuery({
     notifyOnNetworkStatusChange: true,
-    variables: { limit: 10 },
+    variables: { limit: 4 },
   });
-  console.log("erreur: ", error);
-  console.log("useGetPostsQuery", data);
-  const router = useRouter();
   if (loading && !data) {
     return (
       <Grid templateColumns={"repeat(3, 1fr)"} gap={6} mx="auto" mt={6}>
@@ -44,43 +48,86 @@ const PostsLayout: React.FC<PostsLayoutProps> = ({}) => {
   } else {
     return (
       <Box>
-        <Grid templateColumns={"repeat(3, 1fr)"} gap={6} mx="auto" mt={6}>
+        <Grid templateColumns={"repeat(2, 1fr)"} gap={6} mx="auto" mt={6}>
           {data?.getPosts.posts.map((post) => {
             return (
-              <GridItem
-                key={post.id}
-                w={"100%"}
-                onClick={() => router.push("/post/" + post.id)}
-                cursor="pointer"
-              >
-                <Card>
-                  <CardHeader>{post.title}</CardHeader>
+              <GridItem>
+                <Card bg={"gray.900"} boxShadow={"lg"} color={"white"}>
+                  <CardHeader>
+                    <Flex flexDirection={"row"} alignItems={"center"}>
+                      <Heading size={post.title.length >= 25 ? "sm" : "md"}>{post.title}</Heading>
+                      <Flex
+                        pl={3}
+                        ml={3}
+                        borderLeft={"1px"}
+                        borderLeftColor={"gray.700"}
+                        alignItems={"center"}
+                      >
+                        {post.points}
+                        <StarIcon ml={1} />
+                      </Flex>
+                      <Text
+                        as="i"
+                        color={"gray.600"}
+                        justifySelf={"flex-end"}
+                        ml={"auto"}
+                      >
+                        posted by
+                      </Text>
+                      <Tag
+                        as={NextLink}
+                        size={"md"}
+                        bg={"green.100"}
+                        _hover={{ bg: "green.300" }}
+                        href={`/profile/${post.user.username}`}
+                        ml={2}
+                        fontStyle={"normal"}
+                        justifySelf={"flex-end"}
+                      >
+                        {post.user.username}
+                      </Tag>
+                    </Flex>
+                  </CardHeader>
+                  <Divider borderColor="gray.700" />
                   <CardBody>{post.textExcerpt}</CardBody>
+                  <Divider borderColor="gray.700" />
+                  <CardFooter justify={"center"}>
+                    <Button
+                      bg={"green.100"}
+                      _hover={{ bg: "green.300" }}
+                      as={NextLink}
+                      href={`/post/${post.id}`}
+                    >
+                      Read more
+                    </Button>
+                  </CardFooter>
                 </Card>
               </GridItem>
             );
           })}
         </Grid>
-        {
-          data?.getPosts.hasMore ?
+        {data?.getPosts.hasMore ? (
           <Center mt={6}>
-          <Button
-            bg={"green.100"}
-            _hover={{ bg: "green.300" }}
-            isLoading={loading}
-            onClick={() => {
-              fetchMore({
-                variables: {
-                  cursor:
-                    data?.getPosts.posts[data.getPosts.posts.length - 1].createdAt,
-                },
-              });
-            }}
-          >
-            Load more
-          </Button>
-        </Center> : ""
-        }
+            <Button
+              bg={"green.100"}
+              _hover={{ bg: "green.300" }}
+              isLoading={loading}
+              onClick={() => {
+                fetchMore({
+                  variables: {
+                    cursor:
+                      data?.getPosts.posts[data.getPosts.posts.length - 1]
+                        .createdAt,
+                  },
+                });
+              }}
+            >
+              Load more
+            </Button>
+          </Center>
+        ) : (
+          ""
+        )}
       </Box>
     );
   }

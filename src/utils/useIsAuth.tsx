@@ -15,7 +15,7 @@ const useIsAuth = () => {
         newMessage: true,
         modalHeader: "Attention",
         modalBody: (
-          <Box>You need to be authenticated in order to use this page.</Box>
+          <Box>You need to be authenticated in order to use this feature.</Box>
         ),
         modalFooter: [
           <Button  bg={"green.100"} _hover={{ bg: "green.300" }} onClick={() => {
