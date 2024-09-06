@@ -4,11 +4,15 @@ import { useRouter } from "next/router";
 import React from "react";
 import InputField from "../components/InputField";
 import toErrorMap from "../utils/toErrorMap";
-import { useCreatePostMutation } from "../generated/graphql";
+import {
+  GetPostsDocument,
+  useCreatePostMutation,
+} from "../generated/graphql";
 import { Layout } from "../components/Layout";
 import Wrapper from "../components/Wrapper";
 import { useErrorContext } from "../context/ErrorContext";
 import useIsAuth from "../utils/useIsAuth";
+import { _POST_FETCH_LIMIT_ } from "../constants";
 
 interface FormValues {
   title: string;
@@ -16,9 +20,8 @@ interface FormValues {
 }
 
 const CreatePost: React.FC<{}> = ({}) => {
-  //const [createPost, { loading }] = useCreatePostMutation();
-   const [createPost, { loading }] = useCreatePostMutation();
-  const {setError} = useErrorContext();
+  const [createPost, { loading }] = useCreatePostMutation({});
+  const { setError } = useErrorContext();
   useIsAuth();
   const router = useRouter();
   return (
@@ -34,20 +37,31 @@ const CreatePost: React.FC<{}> = ({}) => {
               text: "",
             }}
             onSubmit={async (values: FormValues, actions) => {
-                try {
-                    const response = await createPost({
-                        variables: { input: values },
-                      });
-                      if (response.data?.createPost.errors)
-                        actions.setErrors(toErrorMap(response.data.createPost.errors));
-                      else if (response.data?.createPost.post) router.push("/");
-                } catch (error: any) {
-                    setError({
-                        newError: true,
-                        type: error.graphQLErrors[0]?.extensions.code,
-                        message: error.graphQLErrors[0]?.message
-                    })
-                }   
+              try {
+                const response = await createPost({
+                  variables: { input: values },
+                  refetchQueries: [
+                    {
+                      query: GetPostsDocument,
+                      variables: {
+                        limit: _POST_FETCH_LIMIT_,
+                        cursor: undefined,
+                      },
+                    },
+                  ],
+                });
+                if (response.data?.createPost.errors)
+                  actions.setErrors(
+                    toErrorMap(response.data.createPost.errors)
+                  );
+                else if (response.data?.createPost.post) router.push("/");
+              } catch (error: any) {
+                setError({
+                  newError: true,
+                  type: error.graphQLErrors[0]?.extensions.code,
+                  message: error.graphQLErrors[0]?.message,
+                });
+              }
             }}
           >
             {() => (

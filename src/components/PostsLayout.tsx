@@ -20,14 +20,17 @@ import {
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { StarIcon } from "@chakra-ui/icons";
+import { _POST_FETCH_LIMIT_ } from "../constants";
+import { formatDate } from "../utils/helpers";
 
 interface PostsLayoutProps {}
 
 const PostsLayout: React.FC<PostsLayoutProps> = ({}) => {
   const { loading, data, fetchMore } = useGetPostsQuery({
     notifyOnNetworkStatusChange: true,
-    variables: { limit: 4 },
+    variables: { limit: _POST_FETCH_LIMIT_ },
   });
+  console.log("PostLayout DATA: ", data);
   if (loading && !data) {
     return (
       <Grid templateColumns={"repeat(3, 1fr)"} gap={6} mx="auto" mt={6}>
@@ -48,14 +51,14 @@ const PostsLayout: React.FC<PostsLayoutProps> = ({}) => {
   } else {
     return (
       <Box>
-        <Grid templateColumns={"repeat(2, 1fr)"} gap={6} mx="auto" mt={6}>
+        <Grid templateColumns={"repeat(1, 1fr)"} gap={6} mx="auto" mt={6}>
           {data?.getPosts.posts.map((post) => {
             return (
               <GridItem>
                 <Card bg={"gray.900"} boxShadow={"lg"} color={"white"}>
                   <CardHeader>
                     <Flex flexDirection={"row"} alignItems={"center"}>
-                      <Heading size={post.title.length >= 25 ? "sm" : "md"}>{post.title}</Heading>
+                      <Heading size={"md"}>{post.title}</Heading>
                       <Flex
                         pl={3}
                         ml={3}
@@ -91,12 +94,19 @@ const PostsLayout: React.FC<PostsLayoutProps> = ({}) => {
                   <Divider borderColor="gray.700" />
                   <CardBody>{post.textExcerpt}</CardBody>
                   <Divider borderColor="gray.700" />
-                  <CardFooter justify={"center"}>
+                  <CardFooter justify={"space-between"}>
+                    <Text
+                      as="i"
+                      color={"gray.600"}
+                    >
+                      Added: {formatDate(post.createdAt)}
+                    </Text>
                     <Button
                       bg={"green.100"}
                       _hover={{ bg: "green.300" }}
                       as={NextLink}
                       href={`/post/${post.id}`}
+                      size="sm"
                     >
                       Read more
                     </Button>

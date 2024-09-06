@@ -3,7 +3,7 @@ import theme from "../theme";
 import { AppProps } from "next/app";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { AppWrapper } from "../components/AppWrapper";
-import {PaginatedPosts} from "../generated/graphql";
+import { PaginatedPosts } from "../generated/graphql";
 
 const client = new ApolloClient({
   name: "lireddit_client",
@@ -13,23 +13,28 @@ const client = new ApolloClient({
         fields: {
           getPosts: {
             keyArgs: false,
-            merge(existing: PaginatedPosts, incoming: PaginatedPosts){
+            merge(existing: PaginatedPosts, incoming: PaginatedPosts) {
               const merge = existing?.posts ? existing.posts.slice(0) : [];
-              return {posts: [...merge, ...incoming.posts], hasMore: incoming.hasMore, __typename: "PaginatedPosts"}
-            }
-
-          }
-        }
+              console.log("EXISTING: ", existing);
+              console.log("INCOMING: ", incoming);
+              return {
+                posts: [...merge, ...incoming.posts],
+                hasMore: incoming.hasMore,
+                __typename: "PaginatedPosts",
+              };
+            },
+          },
+        },
       }
-    }
+    },
   }),
   uri: "http://localhost:4000/graphql",
   credentials: "include",
   devtools: {
-    enabled: true
+    enabled: true,
   },
-  ssrMode: true
-})
+  ssrMode: true,
+});
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
