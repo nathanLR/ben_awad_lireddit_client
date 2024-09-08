@@ -19,9 +19,9 @@ import {
   Text,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { StarIcon } from "@chakra-ui/icons";
 import { _POST_FETCH_LIMIT_ } from "../constants";
 import { formatDate } from "../utils/helpers";
+import { VoteInteraction } from "./VoteInteraction";
 
 interface PostsLayoutProps {}
 
@@ -30,7 +30,6 @@ const PostsLayout: React.FC<PostsLayoutProps> = ({}) => {
     notifyOnNetworkStatusChange: true,
     variables: { limit: _POST_FETCH_LIMIT_ },
   });
-  console.log("PostLayout DATA: ", data);
   if (loading && !data) {
     return (
       <Grid templateColumns={"repeat(3, 1fr)"} gap={6} mx="auto" mt={6}>
@@ -54,63 +53,53 @@ const PostsLayout: React.FC<PostsLayoutProps> = ({}) => {
         <Grid templateColumns={"repeat(1, 1fr)"} gap={6} mx="auto" mt={6}>
           {data?.getPosts.posts.map((post) => {
             return (
-              <GridItem>
-                <Card bg={"gray.900"} boxShadow={"lg"} color={"white"}>
-                  <CardHeader>
-                    <Flex flexDirection={"row"} alignItems={"center"}>
-                      <Heading size={"md"}>{post.title}</Heading>
-                      <Flex
-                        pl={3}
-                        ml={3}
-                        borderLeft={"1px"}
-                        borderLeftColor={"gray.700"}
-                        alignItems={"center"}
-                      >
-                        {post.points}
-                        <StarIcon ml={1} />
+              <GridItem key={post.id}>
+                <Card bg={"gray.900"} boxShadow={"lg"} color={"white"} direction={"row"}>
+                  <VoteInteraction post={post}/>
+                  <Box w={"full"}>
+                    <CardHeader>
+                      <Flex flexDirection={"row"} alignItems={"center"}>
+                        <Heading size={"md"}>{post.title}</Heading>
+                        <Text
+                          as="i"
+                          color={"gray.600"}
+                          justifySelf={"flex-end"}
+                          ml={"auto"}
+                        >
+                          posted by
+                        </Text>
+                        <Tag
+                          as={NextLink}
+                          size={"md"}
+                          bg={"green.100"}
+                          _hover={{ bg: "green.300" }}
+                          href={`/profile/${post.user.username}`}
+                          ml={2}
+                          fontStyle={"normal"}
+                          justifySelf={"flex-end"}
+                        >
+                          {post.user.username}
+                        </Tag>
                       </Flex>
-                      <Text
-                        as="i"
-                        color={"gray.600"}
-                        justifySelf={"flex-end"}
-                        ml={"auto"}
-                      >
-                        posted by
+                    </CardHeader>
+                    <Divider borderColor="gray.700" />
+                    <CardBody>{post.textExcerpt}</CardBody>
+                    <Divider borderColor="gray.700" />
+                    <CardFooter justify={"space-between"}>
+                      <Text as="i" color={"gray.600"}>
+                        Added: {formatDate(post.createdAt)}
                       </Text>
-                      <Tag
-                        as={NextLink}
-                        size={"md"}
+                      <Button
                         bg={"green.100"}
                         _hover={{ bg: "green.300" }}
-                        href={`/profile/${post.user.username}`}
-                        ml={2}
-                        fontStyle={"normal"}
-                        justifySelf={"flex-end"}
+                        as={NextLink}
+                        href={`/post/${post.id}`}
+                        size="sm"
                       >
-                        {post.user.username}
-                      </Tag>
-                    </Flex>
-                  </CardHeader>
-                  <Divider borderColor="gray.700" />
-                  <CardBody>{post.textExcerpt}</CardBody>
-                  <Divider borderColor="gray.700" />
-                  <CardFooter justify={"space-between"}>
-                    <Text
-                      as="i"
-                      color={"gray.600"}
-                    >
-                      Added: {formatDate(post.createdAt)}
-                    </Text>
-                    <Button
-                      bg={"green.100"}
-                      _hover={{ bg: "green.300" }}
-                      as={NextLink}
-                      href={`/post/${post.id}`}
-                      size="sm"
-                    >
-                      Read more
-                    </Button>
-                  </CardFooter>
+                        Read more
+                      </Button>
+                    </CardFooter>
+                  </Box>
                 </Card>
               </GridItem>
             );

@@ -15,8 +15,6 @@ const client = new ApolloClient({
             keyArgs: false,
             merge(existing: PaginatedPosts, incoming: PaginatedPosts) {
               const merge = existing?.posts ? existing.posts.slice(0) : [];
-              console.log("EXISTING: ", existing);
-              console.log("INCOMING: ", incoming);
               return {
                 posts: [...merge, ...incoming.posts],
                 hasMore: incoming.hasMore,

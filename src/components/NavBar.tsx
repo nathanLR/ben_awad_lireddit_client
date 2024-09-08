@@ -1,7 +1,8 @@
 import { Button, HStack, Link } from '@chakra-ui/react';
 import NextLink from "next/link";
 import React, { ReactNode } from 'react';
-import { LogoutMutation, MeDocument, MeQuery, useLogoutMutation, useMeQuery } from '../generated/graphql';
+import { GetPostsDocument, LogoutMutation, MeDocument, MeQuery, useLogoutMutation, useMeQuery } from '../generated/graphql';
+import { _POST_FETCH_LIMIT_ } from '../constants';
 
 interface NavBarWrapperProps {
     children: React.ReactNode;
@@ -25,8 +26,17 @@ const NavBar: React.FC<{}> = ({}) => {
                     return {
                         whoAmI: null
                     }
-            })
-        }
+            });
+        },
+        refetchQueries: [
+            {
+              query: GetPostsDocument,
+              variables: {
+                limit: _POST_FETCH_LIMIT_,
+                cursor: undefined,
+              },
+            },
+          ],
     });
     const {data: dataMe, loading: loadingMe} = useMeQuery();
     let content: ReactNode = null;

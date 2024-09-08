@@ -5,6 +5,7 @@ import InputField from "../components/InputField";
 import toErrorMap from "../utils/toErrorMap";
 import { useRouter } from "next/router";
 import {
+  GetPostsDocument,
   LoginMutation,
   MeDocument,
   MeQuery,
@@ -12,6 +13,7 @@ import {
 } from "../generated/graphql";
 import NextLink from "next/link";
 import Wrapper from "../components/Wrapper";
+import { _POST_FETCH_LIMIT_ } from "../constants";
 
 interface FormValues {
   usernameOrEmail: string;
@@ -32,6 +34,15 @@ const Login: React.FC<{}> = ({}) => {
         }
       );
     },
+    refetchQueries: [
+      {
+        query: GetPostsDocument,
+        variables: {
+          limit: _POST_FETCH_LIMIT_,
+          cursor: undefined,
+        },
+      },
+    ],
   });
   const router = useRouter();
   return (
@@ -48,7 +59,7 @@ const Login: React.FC<{}> = ({}) => {
               actions.setErrors(toErrorMap(response.data.login.errors));
             else if (response.data?.login.user){
               if (router.query.next != undefined)
-                router.replace(router.query.next);
+                router.replace(router.query.next as any);
               else
                 router.replace("/");
             }

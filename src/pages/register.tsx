@@ -6,12 +6,14 @@ import toErrorMap from "../utils/toErrorMap";
 import { useRouter } from "next/router";
 import {
   CreateUserMutation,
+  GetPostsDocument,
   MeDocument,
   MeQuery,
   useCreateUserMutation,
 } from "../generated/graphql";
 import NextLink from "next/link";
 import Wrapper from "../components/Wrapper";
+import { _POST_FETCH_LIMIT_ } from "../constants";
 
 interface FormValues {
   username: string;
@@ -33,6 +35,15 @@ const Register: React.FC<{}> = ({}) => {
         }
       );
     },
+    refetchQueries: [
+      {
+        query: GetPostsDocument,
+        variables: {
+          limit: _POST_FETCH_LIMIT_,
+          cursor: undefined,
+        },
+      },
+    ],
   });
   console.log(data);
   const router = useRouter();
