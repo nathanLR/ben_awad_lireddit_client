@@ -21,7 +21,7 @@ import {
 import NextLink from "next/link";
 import { _POST_FETCH_LIMIT_ } from "../constants";
 import { formatDate } from "../utils/helpers";
-import { VoteInteraction } from "./VoteInteraction";
+import VoteInteraction from "./VoteInteraction";
 
 interface PostsLayoutProps {}
 
@@ -73,7 +73,7 @@ const PostsLayout: React.FC<PostsLayoutProps> = ({}) => {
                           size={"md"}
                           bg={"green.100"}
                           _hover={{ bg: "green.300" }}
-                          href={`/profile/${post.user.username}`}
+                          href={`/user/${post.user.username}`}
                           ml={2}
                           fontStyle={"normal"}
                           justifySelf={"flex-end"}

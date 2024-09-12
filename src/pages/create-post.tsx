@@ -40,15 +40,15 @@ const CreatePost: React.FC<{}> = ({}) => {
               try {
                 const response = await createPost({
                   variables: { input: values },
-                  refetchQueries: [
-                    {
-                      query: GetPostsDocument,
-                      variables: {
-                        limit: _POST_FETCH_LIMIT_,
-                        cursor: undefined,
-                      },
-                    },
-                  ],
+                  // refetchQueries: [
+                  //   {
+                  //     query: GetPostsDocument,
+                  //     variables: {
+                  //       limit: _POST_FETCH_LIMIT_,
+                  //       cursor: undefined,
+                  //     },
+                  //   },
+                  // ],
                 });
                 if (response.data?.createPost.errors)
                   actions.setErrors(

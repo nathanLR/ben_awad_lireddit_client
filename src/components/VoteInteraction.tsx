@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Post, PostSnippetFragment, useVoteMutation } from "../generated/graphql";
+import { useState } from "react";
+import { Post, PostSnippetFragment, useMeQuery, useVoteMutation } from "../generated/graphql";
 import { Flex, IconButton, Text } from "@chakra-ui/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import { useErrorContext } from "../context/ErrorContext";
@@ -7,9 +7,11 @@ import { gql } from "@apollo/client";
 
 interface VoteInteractionProps {
   post: PostSnippetFragment;
+  variant?: "singlePost" | "postLayout"
 }
 
-export const VoteInteraction: React.FC<VoteInteractionProps> = ({ post }) => {
+const VoteInteraction: React.FC<VoteInteractionProps> = ({ post, variant = "postLayout" }) => {
+  const {data} = useMeQuery();
   const [vote, _] = useVoteMutation({
     update: (cache, { data: mutationResult }) => {
       if (!mutationResult) return;
@@ -42,20 +44,22 @@ export const VoteInteraction: React.FC<VoteInteractionProps> = ({ post }) => {
   const [voteStatus, setVoteStatus] = useState<
     "upvote" | "downvote" | "novote"
   >("novote");
+
   return (
     <Flex
-      borderRightWidth={1}
+      borderRightWidth={variant == "postLayout" ? 1 : ''}
       borderRightColor={"gray.700"}
-      p={"1.25rem"}
-      direction={"column"}
-      justifyContent={"space-between"}
-      alignItems={"center"}
+      p={variant == "postLayout" ? "1.25rem" : ""}
+      direction={variant == "postLayout" ? "column" : "row"}
+      justifyContent={variant == "postLayout" ? "space-between" : ""}
+      alignItems={variant == "postLayout" ? "center" : ""}
     >
       <IconButton
         icon={<ChevronUpIcon boxSize={6} />}
         aria-label="Upvote post"
         isLoading={voteStatus === "upvote"}
         bg={post.voteStatus == 1 ? "green.400" : "gray.100"}
+        isDisabled={data?.whoAmI?.id == post.user.id}
         onClick={async () => {
           setVoteStatus("upvote");
           try {
@@ -71,7 +75,7 @@ export const VoteInteraction: React.FC<VoteInteractionProps> = ({ post }) => {
           }
         }}
       />
-      <Text as={"span"} fontSize={"2xl"}>
+      <Text as={"span"} fontSize={"2xl"} mx={variant == "singlePost" ? 2 : 0}>
         {post.points}
       </Text>
       <IconButton
@@ -79,6 +83,7 @@ export const VoteInteraction: React.FC<VoteInteractionProps> = ({ post }) => {
         aria-label="Downvote post"
         isLoading={voteStatus === "downvote"}
         bg={post.voteStatus == -1 ? "red.400" : "gray.100"}
+        isDisabled={data?.whoAmI?.id == post.user.id}
         onClick={async () => {
           setVoteStatus("downvote");
           try {
@@ -97,3 +102,5 @@ export const VoteInteraction: React.FC<VoteInteractionProps> = ({ post }) => {
     </Flex>
   );
 };
+
+export default VoteInteraction;
