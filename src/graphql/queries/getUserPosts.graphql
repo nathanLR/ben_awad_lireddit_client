@@ -1,5 +1,5 @@
-query GetUserPosts($userId: Int!, $limit: Int!) {
-  getUserPosts(userId: $userId, limit: $limit) {
+query GetUserPosts($username: String!, $limit: Int!, $cursor: String) {
+  getUserPosts(username: $username, limit: $limit, cursor: $cursor) {
     posts {
       ...PostSnippet
     }

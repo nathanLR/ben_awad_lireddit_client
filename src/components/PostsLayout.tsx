@@ -1,5 +1,5 @@
 import React from "react";
-import { useGetPostsQuery } from "../generated/graphql";
+import { PaginatedPosts } from "../generated/graphql";
 import {
   Box,
   Button,
@@ -23,13 +23,15 @@ import { _POST_FETCH_LIMIT_ } from "../constants";
 import { formatDate } from "../utils/helpers";
 import VoteInteraction from "./VoteInteraction";
 
-interface PostsLayoutProps {}
+interface PostsLayoutProps {
+  loading: boolean,
+  data: PaginatedPosts,
+  fetchMore: any,
+}
 
-const PostsLayout: React.FC<PostsLayoutProps> = ({}) => {
-  const { loading, data, fetchMore } = useGetPostsQuery({
-    notifyOnNetworkStatusChange: true,
-    variables: { limit: _POST_FETCH_LIMIT_ },
-  });
+const PostsLayout: React.FC<PostsLayoutProps> = ({loading, data, fetchMore}) => {
+  
+  console.log(data);
   if (loading && !data) {
     return (
       <Grid templateColumns={"repeat(3, 1fr)"} gap={6} mx="auto" mt={6}>
@@ -51,7 +53,7 @@ const PostsLayout: React.FC<PostsLayoutProps> = ({}) => {
     return (
       <Box>
         <Grid templateColumns={"repeat(1, 1fr)"} gap={6} mx="auto" mt={6}>
-          {data?.getPosts.posts.map((post) => {
+          {data.posts.map((post) => {
             return (
               <GridItem key={post.id}>
                 <Card bg={"gray.900"} boxShadow={"lg"} color={"white"} direction={"row"}>
@@ -105,20 +107,21 @@ const PostsLayout: React.FC<PostsLayoutProps> = ({}) => {
             );
           })}
         </Grid>
-        {data?.getPosts.hasMore ? (
+        {data?.hasMore ? (
           <Center mt={6}>
             <Button
               bg={"green.100"}
               _hover={{ bg: "green.300" }}
               isLoading={loading}
-              onClick={() => {
-                fetchMore({
+              onClick={async() => {
+                const result = await fetchMore({
                   variables: {
                     cursor:
-                      data?.getPosts.posts[data.getPosts.posts.length - 1]
+                      data?.posts[data.posts.length - 1]
                         .createdAt,
                   },
                 });
+                console.log("fetchmore: ",result);
               }}
             >
               Load more

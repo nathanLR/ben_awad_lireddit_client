@@ -137,7 +137,7 @@ export type QueryGetPostsArgs = {
 export type QueryGetUserPostsArgs = {
   cursor?: InputMaybe<Scalars['String']['input']>;
   limit: Scalars['Int']['input'];
-  userId: Scalars['Int']['input'];
+  username: Scalars['String']['input'];
 };
 
 export type Upvote = {
@@ -242,8 +242,9 @@ export type GetPostsQueryVariables = Exact<{
 export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textExcerpt: string, points: number, voteStatus?: number | null, user: { __typename?: 'User', id: number, username: string } }> } };
 
 export type GetUserPostsQueryVariables = Exact<{
-  userId: Scalars['Int']['input'];
+  username: Scalars['String']['input'];
   limit: Scalars['Int']['input'];
+  cursor?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
@@ -642,8 +643,8 @@ export type GetPostsLazyQueryHookResult = ReturnType<typeof useGetPostsLazyQuery
 export type GetPostsSuspenseQueryHookResult = ReturnType<typeof useGetPostsSuspenseQuery>;
 export type GetPostsQueryResult = Apollo.QueryResult<GetPostsQuery, GetPostsQueryVariables>;
 export const GetUserPostsDocument = gql`
-    query GetUserPosts($userId: Int!, $limit: Int!) {
-  getUserPosts(userId: $userId, limit: $limit) {
+    query GetUserPosts($username: String!, $limit: Int!, $cursor: String) {
+  getUserPosts(username: $username, limit: $limit, cursor: $cursor) {
     posts {
       ...PostSnippet
     }
@@ -664,8 +665,9 @@ export const GetUserPostsDocument = gql`
  * @example
  * const { data, loading, error } = useGetUserPostsQuery({
  *   variables: {
- *      userId: // value for 'userId'
+ *      username: // value for 'username'
  *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
  *   },
  * });
  */

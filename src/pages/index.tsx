@@ -4,8 +4,17 @@ import { Button, Divider, Flex, Heading } from "@chakra-ui/react";
 import NextLink from "next/link";
 import PostsLayout from "../components/PostsLayout";
 import { AddIcon } from "@chakra-ui/icons";
+import { PaginatedPosts, useGetPostsQuery } from "../generated/graphql";
+import { _POST_FETCH_LIMIT_ } from "../constants";
 
 export default function index() {
+  const {loading, data, fetchMore} = useGetPostsQuery({
+    notifyOnNetworkStatusChange: true,
+    variables: {
+        limit: _POST_FETCH_LIMIT_
+    }
+});
+
   return (
     <Layout>
       <Flex justifyContent={"space-between"} alignItems={"center"}>
@@ -24,7 +33,7 @@ export default function index() {
       </Flex>
 
       <Divider borderColor={"whiteAlpha.400"} />
-      <PostsLayout />
+      <PostsLayout loading={loading} data={data?.getPosts as PaginatedPosts} fetchMore={fetchMore}/>
     </Layout>
   );
 }
