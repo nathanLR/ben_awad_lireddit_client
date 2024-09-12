@@ -117,6 +117,7 @@ export type Query = {
   __typename?: 'Query';
   getPost?: Maybe<Post>;
   getPosts: PaginatedPosts;
+  getUserPosts: PaginatedPosts;
   getUsers: Array<User>;
   whoAmI?: Maybe<User>;
 };
@@ -130,6 +131,13 @@ export type QueryGetPostArgs = {
 export type QueryGetPostsArgs = {
   cursor?: InputMaybe<Scalars['String']['input']>;
   limit: Scalars['Int']['input'];
+};
+
+
+export type QueryGetUserPostsArgs = {
+  cursor?: InputMaybe<Scalars['String']['input']>;
+  limit: Scalars['Int']['input'];
+  userId: Scalars['Int']['input'];
 };
 
 export type Upvote = {
@@ -225,6 +233,14 @@ export type GetPostsQueryVariables = Exact<{
 
 
 export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textExcerpt: string, points: number, voteStatus?: number | null, user: { __typename?: 'User', id: number, username: string } }> } };
+
+export type GetUserPostsQueryVariables = Exact<{
+  userId: Scalars['Int']['input'];
+  limit: Scalars['Int']['input'];
+}>;
+
+
+export type GetUserPostsQuery = { __typename?: 'Query', getUserPosts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textExcerpt: string, points: number, voteStatus?: number | null, user: { __typename?: 'User', id: number, username: string } }> } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -567,6 +583,50 @@ export type GetPostsQueryHookResult = ReturnType<typeof useGetPostsQuery>;
 export type GetPostsLazyQueryHookResult = ReturnType<typeof useGetPostsLazyQuery>;
 export type GetPostsSuspenseQueryHookResult = ReturnType<typeof useGetPostsSuspenseQuery>;
 export type GetPostsQueryResult = Apollo.QueryResult<GetPostsQuery, GetPostsQueryVariables>;
+export const GetUserPostsDocument = gql`
+    query GetUserPosts($userId: Int!, $limit: Int!) {
+  getUserPosts(userId: $userId, limit: $limit) {
+    posts {
+      ...PostSnippet
+    }
+    hasMore
+  }
+}
+    ${PostSnippetFragmentDoc}`;
+
+/**
+ * __useGetUserPostsQuery__
+ *
+ * To run a query within a React component, call `useGetUserPostsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserPostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserPostsQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetUserPostsQuery(baseOptions: Apollo.QueryHookOptions<GetUserPostsQuery, GetUserPostsQueryVariables> & ({ variables: GetUserPostsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserPostsQuery, GetUserPostsQueryVariables>(GetUserPostsDocument, options);
+      }
+export function useGetUserPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserPostsQuery, GetUserPostsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserPostsQuery, GetUserPostsQueryVariables>(GetUserPostsDocument, options);
+        }
+export function useGetUserPostsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUserPostsQuery, GetUserPostsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUserPostsQuery, GetUserPostsQueryVariables>(GetUserPostsDocument, options);
+        }
+export type GetUserPostsQueryHookResult = ReturnType<typeof useGetUserPostsQuery>;
+export type GetUserPostsLazyQueryHookResult = ReturnType<typeof useGetUserPostsLazyQuery>;
+export type GetUserPostsSuspenseQueryHookResult = ReturnType<typeof useGetUserPostsSuspenseQuery>;
+export type GetUserPostsQueryResult = Apollo.QueryResult<GetUserPostsQuery, GetUserPostsQueryVariables>;
 export const MeDocument = gql`
     query Me {
   whoAmI {
