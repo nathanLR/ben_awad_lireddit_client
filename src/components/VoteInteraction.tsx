@@ -16,7 +16,6 @@ const VoteInteraction: React.FC<VoteInteractionProps> = ({ post, variant = "post
     update: (cache, { data: mutationResult }) => {
       if (!mutationResult) return;
       const {vote} = mutationResult;
-      console.log(vote);
       const postFragmentRead = cache.readFragment<Post>({
         id: "Post:" + vote?.postId,
         fragment: gql`

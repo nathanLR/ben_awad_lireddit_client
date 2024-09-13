@@ -1,0 +1,14 @@
+mutation UpdatePost($text: String!, $title: String!, $updatePostId: Int!) {
+  updatePost(text: $text, title: $title, id: $updatePostId) {
+    errors {
+        ...ErrorFields
+    }
+    post {
+        id
+        updatedAt
+        title
+        textExcerpt
+        text
+    }
+  }
+}
