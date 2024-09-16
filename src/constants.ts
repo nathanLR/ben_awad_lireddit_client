@@ -1,1 +1,1 @@
-export const _POST_FETCH_LIMIT_: number = 4;
+export const _POST_FETCH_LIMIT_: number = 10;
